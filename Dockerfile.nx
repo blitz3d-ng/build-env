@@ -1,0 +1,19 @@
+FROM devkitpro/toolchain-base AS devkitpro
+
+RUN ln -sf /proc/self/mounts /etc/mtab && \
+    dkp-pacman -Syyu --noconfirm switch-dev && \
+    dkp-pacman -S --needed --noconfirm `dkp-pacman -Slq dkp-libs | grep '^switch-'` && \
+    dkp-pacman -Scc --noconfirm
+
+FROM debian:10 AS build
+ENV DEBIAN_FRONTEND noninteractive
+
+COPY --from=devkitpro /opt/devkitpro /opt/devkitpro
+
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y git build-essential clang ninja-build wget zip pkg-config
+
+# cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
+    bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.21.2-linux-x86_64.sh
