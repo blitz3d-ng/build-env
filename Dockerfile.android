@@ -22,12 +22,13 @@ RUN cd /usr/local/src && \
 
 FROM debian:buster AS build
 ENV DEBIAN_FRONTEND noninteractive
+ENV BUNDLE_SILENCE_ROOT_WARNING true
 ENV PATH=/opt/ruby/bin:$PATH
 
 COPY --from=ruby /opt/ruby /opt/ruby
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential ninja-build wget zip default-jre pkg-config automake zlib1g-dev
+    apt-get install -y git build-essential ninja-build wget zip default-jre pkg-config automake zlib1g-dev libyaml-0-2
 
 # cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \

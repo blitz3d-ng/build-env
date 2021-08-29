@@ -28,13 +28,14 @@ RUN rm -r /opt/devkitpro/portlibs/switch/include/ode
 
 FROM debian:10 AS build
 ENV DEBIAN_FRONTEND noninteractive
+ENV BUNDLE_SILENCE_ROOT_WARNING true
 ENV PATH=/opt/ruby/bin:$PATH
 
 COPY --from=ruby /opt/ruby /opt/ruby
 COPY --from=devkitpro /opt/devkitpro /opt/devkitpro
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential clang ninja-build wget zip pkg-config
+    apt-get install -y git build-essential clang ninja-build wget zip pkg-config libyaml-0-2
 
 # cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \

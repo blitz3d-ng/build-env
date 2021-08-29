@@ -22,12 +22,13 @@ RUN cd /usr/local/src && \
 
 FROM debian:11 AS build
 ENV DEBIAN_FRONTEND noninteractive
+ENV BUNDLE_SILENCE_ROOT_WARNING true
 ENV PATH=/opt/ruby/bin:$PATH
 
 COPY --from=ruby /opt/ruby /opt/ruby
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential ninja-build wget zip pkg-config automake zlib1g-dev clang libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev libglu1-mesa-dev
+    apt-get install -y git build-essential ninja-build wget zip pkg-config automake zlib1g-dev clang libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev libglu1-mesa-dev libyaml-0-2
 
 # cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
