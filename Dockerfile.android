@@ -1,15 +1,12 @@
-FROM debian:buster AS build
+##
+# A basic Android SDK environment.
+
+FROM debian:10 AS ruby
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential ninja-build wget zip default-jre pkg-config automake zlib1g-dev
+RUN apt-get update && \
+    apt-get install -y wget build-essential
 
-# cmake
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
-    bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
-    rm cmake-3.21.2-linux-x86_64.sh
-
-# ruby
 ENV RUBY_VERSION=3.0.2
 ENV RUBY_INSTALL_VERSION=0.8.2
 ENV PATH=/opt/ruby/bin:$PATH
@@ -22,6 +19,20 @@ RUN cd /usr/local/src && \
     gem update --system && \
     gem install bundler && \
     rm -rf /usr/local/src/* ~/.cache/ruby-install
+
+FROM debian:buster AS build
+ENV DEBIAN_FRONTEND noninteractive
+ENV PATH=/opt/ruby/bin:$PATH
+
+COPY --from=ruby /opt/ruby /opt/ruby
+
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y git build-essential ninja-build wget zip default-jre pkg-config automake zlib1g-dev
+
+# cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
+    bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.21.2-linux-x86_64.sh
 
 # android
 ENV ANDROID_HOME /opt/android-sdk

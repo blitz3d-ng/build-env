@@ -1,5 +1,5 @@
 ##
-# A basic Debian "buster" build environment
+# A basic Debian "buster" build environment.
 
 FROM debian:10 AS ruby
 ENV DEBIAN_FRONTEND noninteractive
@@ -22,6 +22,7 @@ RUN cd /usr/local/src && \
 
 FROM debian:10 AS build
 ENV DEBIAN_FRONTEND noninteractive
+ENV PATH=/opt/ruby/bin:$PATH
 
 COPY --from=ruby /opt/ruby /opt/ruby
 

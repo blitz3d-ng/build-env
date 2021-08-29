@@ -1,5 +1,5 @@
 ##
-# A basic Debian "buster" build environment
+# A basic Debian "buster" build environment.
 
 FROM debian:11 AS ruby
 ENV DEBIAN_FRONTEND noninteractive
@@ -22,6 +22,7 @@ RUN cd /usr/local/src && \
 
 FROM debian:11 AS build
 ENV DEBIAN_FRONTEND noninteractive
+ENV PATH=/opt/ruby/bin:$PATH
 
 COPY --from=ruby /opt/ruby /opt/ruby
 
@@ -32,6 +33,3 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
     bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.21.2-linux-x86_64.sh
-
-
-    RUN apt-get install -y
