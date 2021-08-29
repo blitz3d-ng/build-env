@@ -35,7 +35,7 @@ COPY --from=ruby /opt/ruby /opt/ruby
 COPY --from=devkitpro /opt/devkitpro /opt/devkitpro
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential clang ninja-build wget zip pkg-config libyaml-0-2
+    apt-get install -y git build-essential clang ninja-build wget zip pkg-config libyaml-0-2 zlib1g-dev
 
 # cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
