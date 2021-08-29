@@ -1,9 +1,8 @@
-FROM devkitpro/toolchain-base AS devkitpro
+FROM devkitpro/devkita64:20210726 AS devkitpro
 
-RUN ln -sf /proc/self/mounts /etc/mtab && \
-    dkp-pacman -Syyu --noconfirm switch-dev && \
-    dkp-pacman -S --needed --noconfirm `dkp-pacman -Slq dkp-libs | grep '^switch-'` && \
-    dkp-pacman -Scc --noconfirm
+# some of the provided libs conflict with ours
+RUN rm -r /opt/devkitpro/portlibs/switch/include/freetype2
+RUN rm -r /opt/devkitpro/portlibs/switch/include/ode
 
 FROM debian:10 AS build
 ENV DEBIAN_FRONTEND noninteractive
