@@ -1,0 +1,37 @@
+##
+# A basic mingw + wine build environment.
+
+FROM debian:11 AS ruby
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update && \
+    apt-get install -y wget build-essential
+
+ENV RUBY_VERSION=3.0.2
+ENV RUBY_INSTALL_VERSION=0.8.2
+ENV PATH=/opt/ruby/bin:$PATH
+RUN cd /usr/local/src && \
+    wget -O ruby-install-$RUBY_INSTALL_VERSION.tar.gz https://github.com/postmodern/ruby-install/archive/v$RUBY_INSTALL_VERSION.tar.gz && \
+    tar -xzvf ruby-install-$RUBY_INSTALL_VERSION.tar.gz && cd ruby-install-$RUBY_INSTALL_VERSION/ && \
+    make install && \
+    ruby-install ruby --install-dir /opt/ruby $RUBY_VERSION && \
+    echo "gem: --no-document" > /root/.gemrc && \
+    gem update --system && \
+    gem install bundler && \
+    rm -rf /usr/local/src/* ~/.cache/ruby-install
+
+FROM debian:11 AS build
+ENV DEBIAN_FRONTEND noninteractive
+ENV BUNDLE_SILENCE_ROOT_WARNING true
+ENV PATH=/opt/ruby/bin:$PATH
+
+COPY --from=ruby /opt/ruby /opt/ruby
+
+RUN dpkg --add-architecture i386 && \
+    apt-get update && apt-get upgrade -y && \
+    apt-get install -y libyaml-0-2 git build-essential ninja-build wget zip pkg-config automake mingw-w64-i686-dev g++-mingw-w64-i686-win32 wine32 wine64
+
+# cmake
+RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
+    bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
+    rm cmake-3.21.2-linux-x86_64.sh
