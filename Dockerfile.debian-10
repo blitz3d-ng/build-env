@@ -7,8 +7,8 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && \
     apt-get install -y wget build-essential
 
-ENV RUBY_VERSION=3.0.2
-ENV RUBY_INSTALL_VERSION=0.8.2
+ARG RUBY_VERSION
+ARG RUBY_INSTALL_VERSION
 ENV PATH=/opt/ruby/bin:$PATH
 RUN cd /usr/local/src && \
     wget -O ruby-install-$RUBY_INSTALL_VERSION.tar.gz https://github.com/postmodern/ruby-install/archive/v$RUBY_INSTALL_VERSION.tar.gz && \

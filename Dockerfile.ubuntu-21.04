@@ -1,7 +1,7 @@
 ##
-# A basic Android SDK environment.
+# A basic Ubuntu "Hirsute Hippo" build environment.
 
-FROM debian:10 AS ruby
+FROM ubuntu:21.04 AS ruby
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
@@ -20,7 +20,7 @@ RUN cd /usr/local/src && \
     gem install bundler && \
     rm -rf /usr/local/src/* ~/.cache/ruby-install
 
-FROM debian:buster AS build
+FROM ubuntu:21.04 AS build
 ENV DEBIAN_FRONTEND noninteractive
 ENV BUNDLE_SILENCE_ROOT_WARNING true
 ENV PATH=/opt/ruby/bin:$PATH
@@ -28,25 +28,9 @@ ENV PATH=/opt/ruby/bin:$PATH
 COPY --from=ruby /opt/ruby /opt/ruby
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential ninja-build wget zip default-jre pkg-config automake zlib1g-dev libyaml-0-2
+    apt-get install -y git build-essential ninja-build wget zip pkg-config automake zlib1g-dev clang libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev libglu1-mesa-dev libyaml-0-2
 
 # cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
     bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.21.2-linux-x86_64.sh
-
-# android
-ENV ANDROID_HOME /opt/android-sdk
-ENV PATH ${PATH}:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}:${ANDROID_HOME}/tools
-ENV ANDROID_NDK $ANDROID_HOME/ndk-bundle
-ENV ANDROID_NDK_HOME $ANDROID_NDK
-
-RUN mkdir -p /opt/android-sdk && mkdir -p ~/.android && touch ~/.android/repositories.cfg
-
-RUN cd /opt/android-sdk && \
-  wget -q --output-document=sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip && \
-  unzip sdk-tools.zip && \
-  rm -f sdk-tools.zip && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "ndk-bundle" && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;27.0.3" "platforms;android-27" && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "extras;android;m2repository" "extras;google;m2repository" "extras;google;google_play_services"
