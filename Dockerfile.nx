@@ -1,43 +1,15 @@
 ##
 # A basic devkitPro environment for compiling to Nintendo Switch.
 
-FROM debian:10 AS ruby
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && \
-    apt-get install -y wget build-essential
-
-ARG RUBY_VERSION
-ARG RUBY_INSTALL_VERSION
-ENV PATH=/opt/ruby/bin:$PATH
-RUN cd /usr/local/src && \
-    wget -O ruby-install-$RUBY_INSTALL_VERSION.tar.gz https://github.com/postmodern/ruby-install/archive/v$RUBY_INSTALL_VERSION.tar.gz && \
-    tar -xzvf ruby-install-$RUBY_INSTALL_VERSION.tar.gz && cd ruby-install-$RUBY_INSTALL_VERSION/ && \
-    make install && \
-    ruby-install ruby --install-dir /opt/ruby $RUBY_VERSION && \
-    echo "gem: --no-document" > /root/.gemrc && \
-    gem update --system && \
-    gem install bundler && \
-    rm -rf /usr/local/src/* ~/.cache/ruby-install
-
 FROM devkitpro/devkita64:20210726 AS devkitpro
 
 # some of the provided libs conflict with ours
 RUN rm -r /opt/devkitpro/portlibs/switch/include/freetype2
 RUN rm -r /opt/devkitpro/portlibs/switch/include/ode
 
-FROM debian:10 AS build
-ENV DEBIAN_FRONTEND noninteractive
-ENV BUNDLE_SILENCE_ROOT_WARNING true
-ENV PATH=/opt/ruby/bin:$PATH
+FROM ghcr.io/blitz3d-ng/env:debian-11 AS build
 
-COPY --from=ruby /opt/ruby /opt/ruby
 COPY --from=devkitpro /opt/devkitpro /opt/devkitpro
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential clang ninja-build wget zip pkg-config libyaml-0-2 zlib1g-dev
-
-# cmake
-RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
-    bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
-    rm cmake-3.21.2-linux-x86_64.sh
+    apt-get install -y clang

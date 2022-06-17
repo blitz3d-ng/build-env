@@ -1,36 +1,32 @@
 ##
 # A basic Ubuntu "Jammy Jellyfish" build environment.
 
-FROM ubuntu:22.04 AS ruby
-ENV DEBIAN_FRONTEND noninteractive
-
-RUN apt-get update && \
-    apt-get install -y wget build-essential
-
-ARG RUBY_VERSION
-ARG RUBY_INSTALL_VERSION
-ENV PATH=/opt/ruby/bin:$PATH
-RUN cd /usr/local/src && \
-    wget -O ruby-install-$RUBY_INSTALL_VERSION.tar.gz https://github.com/postmodern/ruby-install/archive/v$RUBY_INSTALL_VERSION.tar.gz && \
-    tar -xzvf ruby-install-$RUBY_INSTALL_VERSION.tar.gz && cd ruby-install-$RUBY_INSTALL_VERSION/ && \
-    make install && \
-    ruby-install ruby --install-dir /opt/ruby $RUBY_VERSION && \
-    echo "gem: --no-document" > /root/.gemrc && \
-    gem update --system && \
-    gem install bundler && \
-    rm -rf /usr/local/src/* ~/.cache/ruby-install
-
-FROM ubuntu:22.04 AS build
+FROM ubuntu:22.04 AS base
 ENV DEBIAN_FRONTEND noninteractive
 ENV BUNDLE_SILENCE_ROOT_WARNING true
-ENV PATH=/opt/ruby/bin:$PATH
 
-COPY --from=ruby /opt/ruby /opt/ruby
-
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y git build-essential ninja-build wget zip pkg-config automake zlib1g-dev clang libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev libglu1-mesa-dev libyaml-0-2
+RUN apt-get update && \
+    apt-get install -y wget build-essential ninja-build python3
 
 # cmake
 RUN wget https://github.com/Kitware/CMake/releases/download/v3.21.2/cmake-3.21.2-linux-x86_64.sh && \
     bash cmake-3.21.2-linux-x86_64.sh --skip-license --prefix=/usr/local && \
     rm cmake-3.21.2-linux-x86_64.sh
+
+FROM base AS ruby
+ENV PATH=/opt/ruby/bin:$PATH
+ADD ./build-ruby.sh .
+RUN ./build-ruby.sh
+
+FROM base AS llvm
+ADD ./build-llvm.sh .
+RUN ./build-llvm.sh
+
+FROM base AS build
+ENV PATH=/opt/ruby/bin:$PATH
+
+COPY --from=ruby /opt/ruby /opt/ruby
+COPY --from=llvm /opt/llvm /opt/llvm
+
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y git clang zip pkg-config automake zlib1g-dev clang libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev uuid-dev libfontconfig1-dev libglu1-mesa-dev libyaml-0-2
