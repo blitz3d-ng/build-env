@@ -12,6 +12,7 @@ cmake -S llvm-project-llvmorg-$LLVM_VERSION\llvm -B $BUILD_DIR `
   -DLLVM_ENABLE_PROJECTS=lld `
   -DLLVM_ENABLE_RUNTIMES="" `
   -DLLVM_TARGETS_TO_BUILD="AArch64;ARM;WebAssembly;X86" `
+  -DLLVM_BUILD_TOOLS=OFF `
   -DLLVM_HAVE_LIBXAR=OFF
 
 cmake --build $BUILD_DIR
