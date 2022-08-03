@@ -1,7 +1,7 @@
 ##
-# A basic Ubuntu "Hirsute Hippo" build environment.
+# A basic Ubuntu "Focal Fossa" build environment.
 
-FROM ubuntu:21.04 AS base
+FROM ubuntu:20.04 AS base
 ENV DEBIAN_FRONTEND noninteractive
 ENV BUNDLE_SILENCE_ROOT_WARNING true
 
