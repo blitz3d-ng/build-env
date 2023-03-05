@@ -1,15 +1,26 @@
+$ErrorActionPreference = "Stop"
+
 $LLVM_VERSION = "16.0.0-rc3"
 $BUILD_DIR = ".\build"
 $DEST_DIR = ".\llvm"
+$ARCHIVE = ".\llvm-$LLVM_VERSION.zip"
 
-Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-$LLVM_VERSION.zip" -OutFile "llvm.zip"
-Expand-Archive llvm.zip -DestinationPath .\
+if (-not(Test-Path -Path $ARCHIVE -PathType Leaf)) {
+  Invoke-WebRequest -Uri "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-$LLVM_VERSION.zip" -OutFile $ARCHIVE
+}
 
-cmake `
+if (-not(Test-Path -Path llvm-project-llvmorg-$LLVM_VERSION)) {
+  # Expand-Archive seems slow so use 7zip if available
+  if (Get-Command "7z.exe" -ErrorAction SilentlyContinue) {
+    7z x $ARCHIVE
+  } else {
+    Expand-Archive $ARCHIVE -DestinationPath .\
+  }
+}
+
+cmake -S llvm-project-llvmorg-$LLVM_VERSION\llvm -B $BUILD_DIR `
   -G Ninja `
-  -S llvm-project-llvmorg-$LLVM_VERSION\llvm `
-  -B $BUILD_DIR `
-  -DCMAKE_TOOLCHAIN_FILE=.\llvm.cmake `
+  -DCMAKE_TOOLCHAIN_FILE:FILEPATH=..\..\llvm.cmake `
   -DCMAKE_INSTALL_PREFIX=$DEST_DIR
 
 cmake --build $BUILD_DIR

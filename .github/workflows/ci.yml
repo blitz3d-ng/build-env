@@ -11,8 +11,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: win64
@@ -24,6 +22,25 @@ jobs:
         with:
           name: llvm-win64
           path: llvm/
+
+  macos:
+    name: macOS
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macos-11
+          - macos-12
+    steps:
+      - uses: actions/checkout@v3
+      - run:  brew install ninja
+      - run: ./build-llvm.sh build llvm
+      - name: Archive build
+        uses: actions/upload-artifact@v2
+        with:
+          name: llvm-${{ matrix.os }}
+          path: llvm/
+
   # distros:
   #   name: ${{ matrix.platform }}
   #   runs-on: ubuntu-latest
