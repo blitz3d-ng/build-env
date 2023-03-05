@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV BUNDLE_SILENCE_ROOT_WARNING true
 
 RUN apt-get update && \
-    apt-get install -y wget build-essential ninja-build python3
+    apt-get install -y wget build-essential ninja-build python3 valgrind
 
 ADD ./build-cmake.sh .
 RUN ./build-cmake.sh
