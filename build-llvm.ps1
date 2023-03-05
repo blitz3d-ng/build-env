@@ -9,7 +9,7 @@ cmake `
   -G Ninja `
   -S llvm-project-llvmorg-$LLVM_VERSION\llvm `
   -B $BUILD_DIR `
-  -DCMAKE_TOOLCHAIN_FILE=llvm.cmake `
+  -DCMAKE_TOOLCHAIN_FILE=.\llvm.cmake `
   -DCMAKE_INSTALL_PREFIX=$DEST_DIR
 
 cmake --build $BUILD_DIR
