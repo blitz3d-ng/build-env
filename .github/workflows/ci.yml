@@ -10,7 +10,7 @@ jobs:
     name: LLVM (win64)
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
       - uses: ilammy/msvc-dev-cmd@v1
@@ -23,7 +23,6 @@ jobs:
         with:
           name: llvm-win64
           path: llvm/
-
   # distros:
   #   name: ${{ matrix.platform }}
   #   runs-on: ubuntu-latest
