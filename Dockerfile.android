@@ -19,5 +19,6 @@ RUN cd /opt/android-sdk && \
   unzip sdk-tools.zip && \
   rm -f sdk-tools.zip && \
   yes | sdkmanager --sdk_root=${ANDROID_HOME} "ndk-bundle" && \
+  yes | sdkmanager --sdk_root=${ANDROID_HOME} "platforms;android-24" && \
   yes | sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;30.0.2" "platforms;android-30" && \
   yes | sdkmanager --sdk_root=${ANDROID_HOME} "extras;android;m2repository" "extras;google;m2repository" "extras;google;google_play_services"
