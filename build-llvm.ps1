@@ -21,7 +21,7 @@ if (-not(Test-Path -Path llvm-project-llvmorg-$LLVM_VERSION)) {
 cmake -S llvm-project-llvmorg-$LLVM_VERSION\llvm -B $BUILD_DIR `
   -G Ninja `
   -DCMAKE_TOOLCHAIN_FILE:FILEPATH=..\..\llvm.cmake `
-  -DCMAKE_INSTALL_PREFIX=$DEST_DIR
+  -DCMAKE_INSTALL_PREFIX="$DEST_DIR"
 
 cmake --build $BUILD_DIR
 cmake --install $BUILD_DIR
