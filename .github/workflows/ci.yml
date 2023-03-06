@@ -5,6 +5,9 @@ on:
 #     branches:
 #       - master
 
+env:
+  LLVM_VERSION: 16.0.0-rc3
+
 jobs:
   llvm_windows:
     name: LLVM
@@ -21,11 +24,13 @@ jobs:
       - uses: seanmiddleditch/gha-setup-ninja@master
       - shell: pwsh
         run: .\build-llvm.ps1
+      - shell: pwsh
+        run: Compress-Archive -Path llvm -DestinationPath llvm-${{ env.LLVM_VERSION }}-${{ matrix.arch }}-msvc${{ env.VisualStudioVersion }}.zip
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
-          name: llvm-${{ matrix.arch }}-msvc${{ env.VisualStudioVersion }}
-          path: llvm/
+          name: ${{ matrix.arch }}-msvc${{ env.VisualStudioVersion }}
+          path: llvm*msvc${{ env.VisualStudioVersion }}.zip
 
   llvm_macos:
     name: LLVM
@@ -37,13 +42,14 @@ jobs:
           - macos-12
     steps:
       - uses: actions/checkout@v3
-      - run:  brew install ninja
+      - run: brew install ninja
       - run: ./build-llvm.sh build llvm
+      - run: zip -r llvm-${{ env.LLVM_VERSION }}-${{ matrix.os }} llvm
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
-          name: llvm-${{ matrix.os }}
-          path: llvm/
+          name: ${{ matrix.os }}
+          path: llvm*${{ matrix.os }}.zip
 
   # distros:
   #   name: ${{ matrix.platform }}
@@ -119,15 +125,15 @@ jobs:
 
       - uses: actions/download-artifact@v3
         with:
-          name: llvm-macos-11
+          name: macos-11
 
       - uses: actions/download-artifact@v3
         with:
-          name: llvm-macos-12
+          name: macos-12
 
       - uses: actions/download-artifact@v3
         with:
-          name: llvm-win64-msvc17.0
+          name: win64-msvc17.0
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
