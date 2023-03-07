@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: brew install ninja
       - run: ./build-llvm.sh build llvm
-      - run: zip -r llvm-${{ env.LLVM_VERSION }}-${{ matrix.os }} llvm
+      - run: zip -r llvm-${{ env.LLVM_VERSION }}-${{ matrix.os }}.zip llvm
       - name: Archive build
         uses: actions/upload-artifact@v2
         with:
@@ -136,10 +136,12 @@ jobs:
           name: win64-msvc17.0
 
       - name: Release
-        if: startsWith(github.ref, 'refs/tags/v')
+        # if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
-          prerelease: ${{ contains(github.ref, 'beta') }}
+          name: test
+          tag_name: test
+          prerelease: true # ${{ contains(github.ref, 'beta') }}
           generate_release_notes: false
           files: |
             *.zip
