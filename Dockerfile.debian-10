@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV BUNDLE_SILENCE_ROOT_WARNING true
 
 RUN apt-get update && \
-    apt-get install -y wget build-essential ninja-build python3
+    apt-get install -y wget build-essential ninja-build python3 zlib1g-dev
 
 ADD ./build-cmake.sh .
 RUN ./build-cmake.sh
@@ -29,4 +29,4 @@ COPY --from=llvm /opt/llvm /opt/llvm
 ENV LLVM_ROOT=/opt/llvm
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y valgrind git clang zip pkg-config automake autopoint gettext libtool gperf zlib1g-dev libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev libxxf86vm-dev libglu1-mesa-dev libyaml-0-2 libncurses-dev libfontconfig1-dev libwebkit2gtk-4.0-dev
+    apt-get install -y valgrind git clang zip pkg-config automake autopoint gettext libtool gperf libgtk-3-dev libpcre2-dev libxrandr-dev libxinerama-dev libxcursor-dev libxxf86vm-dev libglu1-mesa-dev libyaml-0-2 libncurses-dev libfontconfig1-dev libwebkit2gtk-4.0-dev
