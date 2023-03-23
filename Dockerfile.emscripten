@@ -9,6 +9,7 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # emscripten
 ENV EMSCRIPTEN_VERSION=3.1.14
+ENV EMSDK=/opt/emsdk
 
 RUN git clone https://github.com/juj/emsdk.git /opt/emsdk
 RUN cd /opt/emsdk && ./emsdk install $EMSCRIPTEN_VERSION && ./emsdk activate $EMSCRIPTEN_VERSION && . ./emsdk_env.sh
