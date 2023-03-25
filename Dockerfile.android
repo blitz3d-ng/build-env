@@ -11,6 +11,7 @@ ENV ANDROID_HOME /opt/android-sdk
 ENV PATH ${PATH}:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}:${ANDROID_HOME}/tools
 ENV ANDROID_NDK $ANDROID_HOME/ndk-bundle
 ENV ANDROID_NDK_HOME $ANDROID_NDK
+ENV JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8
 
 RUN mkdir -p /opt/android-sdk && mkdir -p ~/.android && touch ~/.android/repositories.cfg
 
