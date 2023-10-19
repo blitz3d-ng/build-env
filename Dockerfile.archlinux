@@ -1,0 +1,28 @@
+##
+# A basic Arch Linux build environment.
+
+FROM archlinux:base-devel AS base
+
+RUN pacman --noconfirm -Sy wget extra/libyaml extra/ninja python
+
+ADD ./build-cmake.sh .
+RUN ./build-cmake.sh
+
+FROM base AS ruby
+ENV PATH=/opt/ruby/bin:$PATH
+ADD ./build-ruby.sh .
+RUN ./build-ruby.sh
+
+FROM base AS llvm
+ADD ./build-llvm.sh ./llvm.cmake .
+RUN ./build-llvm.sh
+
+FROM base AS build
+ENV PATH=/opt/ruby/bin:$PATH
+
+COPY --from=ruby /opt/ruby /opt/ruby
+COPY --from=llvm /opt/llvm /opt/llvm
+
+ENV LLVM_ROOT=/opt/llvm
+
+RUN pacman --noconfirm -Sy git gtk3 extra/xorg-server-xvfb glew extra/alsa-utils openal
