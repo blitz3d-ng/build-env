@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$LLVM_VERSION = "16.0.6"
+$LLVM_VERSION = "17.0.5"
 $BUILD_DIR = ".\build"
 $DEST_DIR = ".\llvm"
 $ARCHIVE = ".\llvm-$LLVM_VERSION.zip"
