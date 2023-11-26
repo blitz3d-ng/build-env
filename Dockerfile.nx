@@ -1,15 +1,8 @@
 ##
 # A basic devkitPro environment for compiling to Nintendo Switch.
 
-FROM devkitpro/devkita64:20210726 AS devkitpro
-
-# some of the provided libs conflict with ours
-RUN rm -r /opt/devkitpro/portlibs/switch/include/freetype2
-RUN rm -r /opt/devkitpro/portlibs/switch/include/ode
+FROM devkitpro/devkita64:20231108 AS devkitpro
 
 FROM ghcr.io/blitz3d-ng/env:debian-11 AS build
 
 COPY --from=devkitpro /opt/devkitpro /opt/devkitpro
-
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y clang
