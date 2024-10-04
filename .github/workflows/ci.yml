@@ -19,17 +19,17 @@ jobs:
           - archlinux
     steps:
       - name: Setup docker
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to the GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           file: Dockerfile.${{ matrix.platform }}
           tags: ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
@@ -49,17 +49,17 @@ jobs:
           - emscripten
     steps:
       - name: Setup docker
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to the GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           file: Dockerfile.${{ matrix.platform }}
           tags: ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
@@ -77,7 +77,7 @@ jobs:
         arch:
           - win64
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: ${{ matrix.arch }}
@@ -87,7 +87,7 @@ jobs:
       - shell: pwsh
         run: Compress-Archive -Path llvm -DestinationPath llvm-${{ env.LLVM_VERSION }}-${{ matrix.arch }}-msvc${{ env.VisualStudioVersion }}.zip
       - name: Archive build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.arch }}-msvc${{ env.VisualStudioVersion }}
           path: llvm*msvc${{ env.VisualStudioVersion }}.zip
@@ -102,12 +102,12 @@ jobs:
           - macos-12
           - macos-13
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: brew install ninja
       - run: ./build-llvm.sh build llvm
       - run: zip -r llvm-${{ env.LLVM_VERSION }}-${{ matrix.os }}.zip llvm
       - name: Archive build
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.os }}
           path: llvm*${{ matrix.os }}.zip
@@ -125,29 +125,29 @@ jobs:
           export GITHUB_TAG=$(echo ${GITHUB_TAG#refs/heads/})
           echo "GITHUB_TAG=$GITHUB_TAG" >> $GITHUB_ENV
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: macos-11
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: macos-12
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: macos-13
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: win64-msvc16.0
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: win64-msvc17.0
 
       - name: Release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(github.ref, 'beta') }}
           generate_release_notes: false
