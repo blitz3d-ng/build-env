@@ -6,7 +6,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV BUNDLE_SILENCE_ROOT_WARNING true
 
 RUN apt-get update && \
-    apt-get install -y wget build-essential ninja-build python3 zlib1g-dev
+    apt-get install -y wget build-essential ninja-build zlib1g-dev
+
+# python3.7 is the latest available version in the repo
+RUN wget https://www.python.org/ftp/python/3.12.7/Python-3.12.7.tar.xz && \
+    tar -xf Python-3.12.7.tar.xz && \
+    cd Python-3.12.7 && \
+    ./configure --enable-optimizations && \
+    make -j 4 && \
+    make install
 
 ADD ./build-cmake.sh .
 RUN ./build-cmake.sh
