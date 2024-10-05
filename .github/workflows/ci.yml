@@ -98,9 +98,9 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-11
           - macos-12
           - macos-13
+          - macos-14
     steps:
       - uses: actions/checkout@v4
       - run: brew install ninja
