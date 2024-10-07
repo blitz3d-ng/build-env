@@ -108,7 +108,6 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-12
           - macos-13
           - macos-14
     steps:
@@ -134,10 +133,6 @@ jobs:
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
           export GITHUB_TAG=$(echo ${GITHUB_TAG#refs/heads/})
           echo "GITHUB_TAG=$GITHUB_TAG" >> $GITHUB_ENV
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: macos-12
 
       - uses: actions/download-artifact@v4
         with:
