@@ -14,8 +14,10 @@ jobs:
         platform:
           - debian-10
           - debian-11
+          - debian-12
           - ubuntu-20.04
           - ubuntu-22.04
+          - ubuntu-24.04
           - archlinux
     steps:
       - name: Setup docker
@@ -32,7 +34,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile.${{ matrix.platform }}
-          tags: ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
+          tags: |
+            ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
+            ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-run${{ github.run_number }}
           pull: true
           push: true
 
@@ -50,6 +54,8 @@ jobs:
     steps:
       - name: Setup docker
         uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
 
       - name: Log in to the GitHub Container Registry
         uses: docker/login-action@v3
@@ -58,12 +64,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - run: |
+          docker pull ghcr.io/blitz3d-ng/env:debian-12-run${{ github.run_number }}
+          docker tag ghcr.io/blitz3d-ng/env:debian-12-run${{ github.run_number }} ghcr.io/blitz3d-ng/env:debian-12
+
       - name: Build image
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile.${{ matrix.platform }}
           tags: ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
-          pull: true
+          pull: false
           push: true
 
   llvm_windows:
@@ -98,7 +108,6 @@ jobs:
     strategy:
       matrix:
         os:
-          - macos-12
           - macos-13
           - macos-14
     steps:
@@ -124,10 +133,6 @@ jobs:
           export GITHUB_TAG=$(echo ${GITHUB_REF#refs/tags/})
           export GITHUB_TAG=$(echo ${GITHUB_TAG#refs/heads/})
           echo "GITHUB_TAG=$GITHUB_TAG" >> $GITHUB_ENV
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: macos-12
 
       - uses: actions/download-artifact@v4
         with:
