@@ -1,7 +1,7 @@
 ##
 # A basic Android SDK environment.
 
-FROM ghcr.io/blitz3d-ng/env:debian-12-v11 AS build
+FROM ghcr.io/blitz3d-ng/env:debian-12 AS build
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y default-jdk-headless

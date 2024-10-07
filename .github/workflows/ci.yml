@@ -34,7 +34,9 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: Dockerfile.${{ matrix.platform }}
-          tags: ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
+          tags: |
+            ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
+            ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-run${{ github.run_number }}
           pull: true
           push: true
 
@@ -59,6 +61,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: |
+          docker pull ghcr.io/blitz3d-ng/env:debian-12-run${{ github.run_number }}
+          docker tag ghcr.io/blitz3d-ng/env:debian-12-run${{ github.run_number }} ghcr.io/blitz3d-ng/env:debian-12
 
       - name: Build image
         uses: docker/build-push-action@v6
