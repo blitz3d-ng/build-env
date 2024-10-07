@@ -1,7 +1,7 @@
 ##
 # A basic mingw + wine build environment.
 
-FROM ghcr.io/blitz3d-ng/env:debian-11 AS build
+FROM ghcr.io/blitz3d-ng/env:debian-12-v11 AS build
 ENV LLVM_ROOT=
 
 RUN dpkg --add-architecture i386 && \

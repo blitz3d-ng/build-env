@@ -1,7 +1,7 @@
 ##
 # A basic Android SDK environment.
 
-FROM ghcr.io/blitz3d-ng/env:debian-11 AS build
+FROM ghcr.io/blitz3d-ng/env:debian-12-v11 AS build
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y default-jdk-headless
@@ -19,7 +19,7 @@ RUN cd /opt/android-sdk && \
   wget -q --output-document=sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip && \
   unzip sdk-tools.zip && \
   rm -f sdk-tools.zip && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "ndk-bundle" && \
+  yes | sdkmanager --sdk_root=${ANDROID_HOME} "ndk;27.1.12297006" && \
   yes | sdkmanager --sdk_root=${ANDROID_HOME} "platforms;android-24" && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;30.0.2" "platforms;android-30" && \
+  yes | sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;34.0.0" "platforms;android-31" && \
   yes | sdkmanager --sdk_root=${ANDROID_HOME} "extras;android;m2repository" "extras;google;m2repository" "extras;google;google_play_services"
