@@ -71,7 +71,7 @@ jobs:
         with:
           file: Dockerfile.${{ matrix.platform }}
           tags: ghcr.io/blitz3d-ng/env:${{ matrix.platform }}-${{ github.ref_name }}
-          pull: true
+          pull: false
           push: true
 
   llvm_windows:
