@@ -17,7 +17,7 @@ ADD ./build-ruby.sh .
 RUN ./build-ruby.sh
 
 FROM base AS llvm
-ADD ./build-llvm.sh ./llvm.cmake .
+ADD ./build-llvm.sh .
 RUN ./build-llvm.sh
 
 FROM base AS build
