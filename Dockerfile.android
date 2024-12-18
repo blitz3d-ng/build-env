@@ -7,19 +7,26 @@ RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y default-jdk-headless
 
 # android
-ENV ANDROID_HOME /opt/android-sdk
-ENV PATH ${PATH}:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}:${ANDROID_HOME}/tools
-ENV ANDROID_NDK $ANDROID_HOME/ndk-bundle
-ENV ANDROID_NDK_HOME $ANDROID_NDK
-ENV JAVA_TOOL_OPTIONS -Dfile.encoding=UTF8
+ENV JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
 
-RUN mkdir -p /opt/android-sdk && mkdir -p ~/.android && touch ~/.android/repositories.cfg
+ENV ANDROID_HOME=/opt/android-sdk
+ENV PATH=${PATH}:${ANDROID_HOME}/cmdline-tools/tools/bin:${ANDROID_HOME}/platform-tools:${PATH}:${ANDROID_HOME}/tools
 
-RUN cd /opt/android-sdk && \
-  wget -q --output-document=sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip && \
+ENV NDK_VERSION=25.1.8937393
+ENV ANDROID_NDK=$ANDROID_HOME/ndk/$NDK_VERSION
+ENV ANDROID_NDK_HOME=$ANDROID_NDK
+
+ENV BUILD_TOOLS_VERSION=30.0.2
+
+RUN mkdir -p /opt/android-sdk/cmdline-tools && mkdir -p ~/.android && touch ~/.android/repositories.cfg
+
+RUN cd /opt/android-sdk/cmdline-tools && \
+  wget -q --output-document=sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-6200805_latest.zip  && \
   unzip sdk-tools.zip && \
   rm -f sdk-tools.zip && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "ndk;27.1.12297006" && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "platforms;android-24" && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "build-tools;34.0.0" "platforms;android-31" && \
-  yes | sdkmanager --sdk_root=${ANDROID_HOME} "extras;android;m2repository" "extras;google;m2repository" "extras;google;google_play_services"
+  yes | sdkmanager --sdk_root=${ANDROID_HOME} \
+    "build-tools;$BUILD_TOOLS_VERSION" \
+    "extras;android;m2repository"  "extras;google;m2repository" "extras;google;google_play_services" \
+    "platforms;android-24" \
+    "platforms;android-31" \
+    "ndk;$NDK_VERSION"

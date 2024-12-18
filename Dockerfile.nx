@@ -4,6 +4,6 @@
 FROM devkitpro/devkita64:20231108 AS devkitpro
 
 FROM ghcr.io/blitz3d-ng/env:debian-12 AS build
-ENV DEVKITPRO /opt/devkitpro
+ENV DEVKITPRO=/opt/devkitpro
 
 COPY --from=devkitpro /opt/devkitpro /opt/devkitpro
